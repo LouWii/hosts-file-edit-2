@@ -6,6 +6,7 @@ const apiKey = 'electron';
  */
 const api: ElectronApi = {
   versions: process.versions,
+  platform: process.platform,
 };
 
 /**
