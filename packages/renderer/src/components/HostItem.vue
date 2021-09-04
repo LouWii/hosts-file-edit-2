@@ -47,7 +47,7 @@ export default defineComponent({
   },
   data() {
     return {
-      localHostStr: null,
+      localHostStr: '',
     };
   },
   beforeMount(): void {

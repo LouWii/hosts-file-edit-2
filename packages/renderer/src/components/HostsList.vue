@@ -9,6 +9,8 @@
 </template>
 
 <script lang="ts">
+import type { Host } from 'types';
+import type { PropType} from 'vue';
 import {defineComponent} from 'vue';
 import HostItem from '/@/components/HostItem.vue';
 
@@ -20,7 +22,7 @@ export default defineComponent({
   props: {
     hosts: {
       required: true,
-      type: Array,
+      type: Array as PropType<Array<Host>>,
     },
   },
   setup() {
