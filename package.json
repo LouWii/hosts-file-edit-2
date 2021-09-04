@@ -1,5 +1,5 @@
 {
-  "name": "vite-electron-builder",
+  "name": "hosts-file-edit-2",
   "private": true,
   "engines": {
     "node": ">=v14.16",
@@ -47,6 +47,7 @@
     "vue-tsc": "0.3.0"
   },
   "dependencies": {
+    "@typescript-eslint/parser": "^4.30.0",
     "bootstrap": "^3.4.1",
     "electron-updater": "4.5.1",
     "vue": "3.2.6",

@@ -1,6 +1,10 @@
 <template>
   <div class="hosts-list">
-    <host-item :key="index" v-for="(host, index) in hosts" :host="host" />
+    <host-item
+      v-for="(host, index) in hosts"
+      :key="index"
+      :host="host"
+    />
   </div>
 </template>
 
@@ -13,18 +17,24 @@ export default defineComponent({
   components: {
     HostItem,
   },
+  props: {
+    hosts: {
+      required: true,
+      type: Array,
+    },
+  },
   setup() {
     
     return {};
   },
-  props: {
-    hosts: {
-      required: true,
-      type: Array
-    }
-  },
   methods: {
 
-  }
+  },
 });
 </script>
+
+<style scoped>
+.hosts-list {
+  
+}
+</style>

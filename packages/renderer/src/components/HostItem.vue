@@ -1,13 +1,31 @@
 <template>
   <div class="host-item">
     <div class="input-group">
-      <input class="form-control" type="text" v-model="host.str" />
+      <input
+        v-model="localHostStr"
+        class="form-control"
+        type="text"
+      >
       <span class="input-group-btn">
-        <button type="button" class="btn" v-on:click="activateHost" v-bind:class="{'btn-success': host.active, 'btn-default': !host.active}" v-bind:title="host.active ? 'Active' : 'Inactive'" >
-          <span class="glyphicon" v-bind:class="{'glyphicon-ok-circle': host.active, 'glyphicon-ban-circle': !host.active}" ></span>
+        <button
+          type="button"
+          class="btn"
+          :class="{'btn-success': host.active, 'btn-default': !host.active}"
+          :title="host.active ? 'Active' : 'Inactive'"
+          @click="activateHost"
+        >
+          <span
+            class="glyphicon"
+            :class="{'glyphicon-ok-circle': host.active, 'glyphicon-ban-circle': !host.active}"
+          />
         </button>
-        <button type="button" v-on:click="removeHost" class="btn btn-default" title="Delete">
-          <span class="glyphicon glyphicon-trash"></span>
+        <button
+          type="button"
+          class="btn btn-default"
+          title="Delete"
+          @click="removeHost"
+        >
+          <span class="glyphicon glyphicon-trash" />
         </button>
       </span>
     </div>
@@ -22,16 +40,30 @@ export default defineComponent({
   props: {
     host: {
       required: true,
-      type: Object
+      type: Object,
     },
+  },
+  data() {
+    return {
+      localHostStr: null,
+    };
+  },
+  beforeMount() {
+    this.localHostStr = this.host.str;
   },
   methods: {
     activateHost() {
-
+      this.$emit('activate-host' );
     },
     removeHost() {
-      this.$emit('remove-host', )
+      this.$emit('remove-host' );
     },
   },
 });
 </script>
+
+<style scoped>
+.host-item {
+  margin-bottom: 1.5rem;
+}
+</style>
