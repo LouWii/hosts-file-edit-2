@@ -34,7 +34,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.hosts-list {
-  
-}
 </style>

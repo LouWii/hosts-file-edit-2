@@ -33,6 +33,8 @@
 </template>
 
 <script lang="ts">
+import type { Host } from 'types';
+import type { PropType} from 'vue';
 import {defineComponent} from 'vue';
 
 export default defineComponent({
@@ -40,7 +42,7 @@ export default defineComponent({
   props: {
     host: {
       required: true,
-      type: Object,
+      type: Object as PropType<Host>,
     },
   },
   data() {
@@ -48,7 +50,7 @@ export default defineComponent({
       localHostStr: null,
     };
   },
-  beforeMount() {
+  beforeMount(): void {
     this.localHostStr = this.host.str;
   },
   methods: {

@@ -51,6 +51,7 @@
 </template>
 
 <script lang="ts">
+import type { Host } from 'types';
 import {defineComponent} from 'vue';
 import HostsList from '/@/components/HostsList.vue';
 import {getHosts} from '/@/hosts-helper';
@@ -62,26 +63,26 @@ export default defineComponent({
   },
   data() {
     return {
-      hosts: getHosts(),
+      hosts: getHosts() as Array<Host>,
       savingIntoFile: false,
       savingIntoFileState: 0,
     };
   },
   computed: {
-    saveIntoFileButtonClass() {
+    saveIntoFileButtonClass(): Record<string, unknown> {
       return {
         saving: this.savingIntoFile,
         saved: this.savingIntoFileState == 1,
         error: this.savingIntoFileState == -1,
       };
     },
-    saveIntoFileButtonDisabled() {
+    saveIntoFileButtonDisabled(): boolean {
       return this.savingIntoFile || this.savingIntoFileState != 0;
     },
   },
   methods: {
     addHost() {
-      this.hosts.push({str: '', active: true});
+      this.hosts.push({str: '', active: true, index: this.hosts.length + 1});
     },
     saveHostsFile() {
       let mm = 'tt';
