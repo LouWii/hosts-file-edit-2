@@ -5,6 +5,7 @@
         v-model="localHostStr"
         class="form-control"
         type="text"
+        @change="updateHostStr"
       >
       <span class="input-group-btn">
         <button
@@ -12,7 +13,7 @@
           class="btn"
           :class="{'btn-success': host.active, 'btn-default': !host.active}"
           :title="host.active ? 'Active' : 'Inactive'"
-          @click="activateHost"
+          @click="activateHostToggle"
         >
           <span
             class="glyphicon"
@@ -48,19 +49,31 @@ export default defineComponent({
   data() {
     return {
       localHostStr: '',
+      updateDebounce: null as unknown as NodeJS.Timeout,
     };
   },
   beforeMount(): void {
     this.localHostStr = this.host.str;
   },
   methods: {
-    activateHost() {
-      this.$emit('activate-host' );
+    activateHostToggle() {
+      this.$store.commit('toggleHostActive', this.host.index);
     },
     removeHost() {
-      this.$emit('remove-host' );
+      this.$store.commit('removeHost', this.host.index);
+    },
+    updateHostStr() {
+      this.$store.commit('updateHostStr', {index: this.host.index, str: this.localHostStr});
     },
   },
+  watch: {
+    localHostStr() {
+      clearTimeout(this.updateDebounce);
+      this.updateDebounce = setTimeout(() => {
+        this.$store.commit('updateHostStr', {index: this.host.index, str: this.localHostStr});
+      }, 200);
+    }
+  }
 });
 </script>
 

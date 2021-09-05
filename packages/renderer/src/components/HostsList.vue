@@ -9,9 +9,8 @@
 </template>
 
 <script lang="ts">
-import type { Host } from 'types';
-import type { PropType} from 'vue';
 import {defineComponent} from 'vue';
+import { mapState } from 'vuex';
 import HostItem from '/@/components/HostItem.vue';
 
 export default defineComponent({
@@ -19,15 +18,8 @@ export default defineComponent({
   components: {
     HostItem,
   },
-  props: {
-    hosts: {
-      required: true,
-      type: Array as PropType<Array<Host>>,
-    },
-  },
-  setup() {
-    
-    return {};
+  computed: {
+    ...mapState(['hosts']),
   },
   methods: {
 

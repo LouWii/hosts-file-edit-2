@@ -3,3 +3,4 @@ export interface Host {
     active: boolean,
     index: number,
 }
+
