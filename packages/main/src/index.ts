@@ -1,7 +1,7 @@
-import {app, BrowserWindow} from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
-
+import {readHostsFile} from '/@/hosts-file-helper';
 
 const isSingleInstance = app.requestSingleInstanceLock();
 
@@ -99,3 +99,8 @@ if (import.meta.env.PROD) {
     .catch((e) => console.error('Failed check updates:', e));
 }
 
+
+// Events
+ipcMain.handle('app:read-hosts-file', () => {
+  return readHostsFile();
+});

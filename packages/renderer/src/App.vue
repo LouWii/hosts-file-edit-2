@@ -54,8 +54,12 @@ export default defineComponent({
       this.$store.commit('addNewHost');
     },
     saveHostsFile() {
-      let mm = 'tt';
-      mm.charAt(4);
+      const p = window.fileHelper.readFile();
+      p.then((result: string) => {
+        console.log(result);
+      }).catch((error: Error) => {
+        console.log('something was wrong', error);
+      });
     },
     importHostsList() {
       let mm = 'tt';

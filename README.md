@@ -7,3 +7,5 @@
 `npm run watch`
 
 `npm run typecheck`
+
+`npm run lint`
