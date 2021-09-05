@@ -51,7 +51,7 @@ export default defineComponent({
   },
   methods: {
     addHost() {
-      this.$store.commit('addNewHost')
+      this.$store.commit('addNewHost');
     },
     saveHostsFile() {
       let mm = 'tt';

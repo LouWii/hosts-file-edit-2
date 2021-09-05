@@ -1,5 +1,5 @@
-import { ComponentCustomProperties } from 'vue'
-import { Store } from 'vuex'
+// import type { ComponentCustomProperties } from 'vue';
+import type { Store } from 'vuex';
 
 export interface State {
     hosts: Array<Host>

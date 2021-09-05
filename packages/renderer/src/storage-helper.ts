@@ -1,4 +1,4 @@
-import { Host } from "types";
+import type { Host } from 'types';
 
 const saveKey = 'hosts_list';
 
@@ -6,7 +6,7 @@ export const saveHosts = function(hosts: Array<Host>): void {
     if (localStorage) {
         localStorage.setItem(saveKey, JSON.stringify(hosts));
     }
-}
+};
 
 export const loadHosts = function(): Array<Host> {
     if (localStorage) {
@@ -17,4 +17,4 @@ export const loadHosts = function(): Array<Host> {
         }
     }
     return [];
-}
+};

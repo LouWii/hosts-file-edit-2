@@ -1,7 +1,7 @@
 
 interface ElectronApi {
   readonly versions: Readonly<NodeJS.ProcessVersions>
-  readonly platform: Readonly<String>
+  readonly platform: Readonly<string>
 }
 
 declare interface Window {

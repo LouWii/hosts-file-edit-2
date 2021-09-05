@@ -52,6 +52,14 @@ export default defineComponent({
       updateDebounce: null as unknown as NodeJS.Timeout,
     };
   },
+  watch: {
+    localHostStr() {
+      clearTimeout(this.updateDebounce);
+      this.updateDebounce = setTimeout(() => {
+        this.$store.commit('updateHostStr', {index: this.host.index, str: this.localHostStr});
+      }, 200);
+    },
+  },
   beforeMount(): void {
     this.localHostStr = this.host.str;
   },
@@ -66,14 +74,6 @@ export default defineComponent({
       this.$store.commit('updateHostStr', {index: this.host.index, str: this.localHostStr});
     },
   },
-  watch: {
-    localHostStr() {
-      clearTimeout(this.updateDebounce);
-      this.updateDebounce = setTimeout(() => {
-        this.$store.commit('updateHostStr', {index: this.host.index, str: this.localHostStr});
-      }, 200);
-    }
-  }
 });
 </script>
 

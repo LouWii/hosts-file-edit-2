@@ -50,5 +50,8 @@
     "quotes": [
       "warn", "single"
     ]
+  },
+  "globals": {
+    "NodeJS": true
   }
 }

@@ -1,12 +1,13 @@
-import { Host } from 'types';
-import { HostStrUpdate, State } from 'types/vuex';
-import { createStore, Store } from 'vuex';
+import type { Host } from 'types';
+import type { HostStrUpdate, State } from 'types/vuex';
+import { createStore } from 'vuex';
+import type { Store } from 'vuex';
 import { loadHosts, saveHosts } from './storage-helper';
 
 const saveToStoragePlugin = (store: Store<State>) => {
     store.subscribe((mutation, state) => {
         saveHosts(state.hosts);
-    })
+    });
 };
 
 export default createStore({
@@ -16,7 +17,7 @@ export default createStore({
 
         return {
             hosts: loadedHosts,
-        }
+        };
     },
     plugins: [saveToStoragePlugin],
     mutations: {
@@ -28,7 +29,7 @@ export default createStore({
             const host: Host = {
                 str: '127.0.0.1    site.local',
                 active: true,
-                index: maxIndex + 1
+                index: maxIndex + 1,
             };
             state.hosts.push(host);
         },
