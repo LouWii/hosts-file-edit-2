@@ -13,6 +13,9 @@ contextBridge.exposeInMainWorld('fileHelper', {
   readFile: () => {
     return ipcRenderer.invoke('app:read-hosts-file');
   },
+  getHostsLines: () => {
+    return ipcRenderer.invoke('app:get-hosts-lines');
+  },
 });
 
 /**

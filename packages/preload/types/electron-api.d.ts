@@ -5,7 +5,8 @@ interface ElectronApi {
 }
 
 interface FileHelper {
-  readonly readFile: () => Promise
+  readonly readFile: () => Promise<string>
+  readonly getHostsLines: () => Promise<string>
 }
 
 declare interface Window {

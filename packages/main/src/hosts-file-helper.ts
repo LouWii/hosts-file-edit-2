@@ -1,8 +1,8 @@
 import { accessSync, constants, readFile } from 'fs';
 
 //const hostsFilePath = '/etc/hosts';
-//const hostsDelimiterStart = '# ----- HostsFileEdit config - Do not delete -----';
-//const hostsDelimiterEnd   = '# -----      HostsFileEdit config - End      -----';
+const hostsDelimiterStart = '# ----- HostsFileEdit config - Do not delete -----';
+const hostsDelimiterEnd   = '# -----      HostsFileEdit config - End      -----';
 //const regex = /(?:# ----- HostsFileEdit config - Do not delete -----\n)([\s\S]*)(?:# -----      HostsFileEdit config - End      -----\n?)/g;
 const hostsFilePaths: Record<string, string> = {
   'linux': '/etc/hosts',
@@ -31,18 +31,30 @@ export const readHostsFile = function(): Promise<string> {
         }
       });
     }
+  });
+};
 
-    // try {
-    //     accessSync(path, constants.R_OK);
-    // } catch (error) {
-    //     throw `Tried to read file ${path} but file is not readable`;
-    // }
+export const getEditableHostsFromFile = function(): Promise<Array<string>> {
+  return new Promise((resolve, reject) => {
+    readHostsFile().then((content: string) => {
+      const lines: Array<string> = [];
+      let appLines = false;
+      content.split('\n').forEach((line) => {
+        if (line.substr(0, hostsDelimiterStart.length) === hostsDelimiterStart) {
+          appLines = true;
+        } else if (appLines) {
+          if (line.substr(0, hostsDelimiterEnd.length) === hostsDelimiterEnd) {
+            appLines = false;
+          } else {
+            lines.push(line.replace('\r', ''));
+          }
+        }
+      });
 
-    // const content = readFileSync(path);
-
-    // return content;
-
-  
-      
+      resolve(lines);
+    })
+    .catch((error: Error) => {
+      reject(error);
+    });
   });
 };

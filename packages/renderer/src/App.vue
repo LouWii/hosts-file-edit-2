@@ -54,7 +54,7 @@ export default defineComponent({
       this.$store.commit('addNewHost');
     },
     saveHostsFile() {
-      const p = window.fileHelper.readFile();
+      const p = window.fileHelper.getHostsLines();
       p.then((result: string) => {
         console.log(result);
       }).catch((error: Error) => {
