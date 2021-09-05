@@ -36,8 +36,8 @@ const createWindow = async () => {
       enableRemoteModule: import.meta.env.MODE === 'test', // Spectron tests can't work with enableRemoteModule: false
     },
     title: 'Hosts File Edit',
-    height: 300,
-    width: 450,
+    height: 350,
+    width: 550,
     minWidth: 350,
     minHeight: 250,
   });
