@@ -1,4 +1,5 @@
 <template>
+  <loading-overlay/>
   <div class="actions-container">
     <button
       class="btn btn-default"
@@ -25,11 +26,13 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import HostsList from '/@/components/HostsList.vue';
+import LoadingOverlay from '/@/components/LoadingOverlay.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
     HostsList,
+    LoadingOverlay,
   },
   data() {
     return {

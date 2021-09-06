@@ -3,6 +3,7 @@ import type { Store } from 'vuex';
 
 export interface State {
     hosts: Array<Host>
+    showLoadingOverlay: boolean
 }
 
 export interface HostStrUpdate {

@@ -1,7 +1,7 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
-import {getEditableHostsFromFile, readHostsFile} from '/@/hosts-file-helper';
+import {getEditableHostsFromFile, readHostsFile, saveToFile} from '/@/hosts-file-helper';
 
 const isSingleInstance = app.requestSingleInstanceLock();
 
@@ -107,4 +107,8 @@ ipcMain.handle('app:read-hosts-file', () => {
 
 ipcMain.handle('app:get-hosts-lines', () => {
   return getEditableHostsFromFile();
+});
+
+ipcMain.handle('app:save-to-hosts', () => {
+  return saveToFile(['line here']);
 });

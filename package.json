@@ -50,6 +50,7 @@
     "@typescript-eslint/parser": "^4.30.0",
     "bootstrap": "^3.4.1",
     "electron-updater": "4.5.1",
+    "sudo-prompt": "^9.2.1",
     "vue": "3.2.6",
     "vue-router": "4.0.11",
     "vuex": "^4.0.2"

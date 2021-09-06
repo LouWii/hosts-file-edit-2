@@ -17,6 +17,7 @@ export default createStore({
 
         return {
             hosts: loadedHosts,
+            showLoadingOverlay: false,
         };
     },
     plugins: [saveToStoragePlugin],
@@ -33,11 +34,17 @@ export default createStore({
             };
             state.hosts.push(host);
         },
+        hideLoadingOverlay(state: State) {
+            state.showLoadingOverlay = false;
+        },
         removeHost(state: State, index: number) {
             const i = state.hosts.findIndex(host => host.index === index);
             if (typeof i !== 'undefined') {
                 state.hosts.splice(i, 1);
             }
+        },
+        showLoadingOverlay(state: State) {
+            state.showLoadingOverlay = true;
         },
         toggleHostActive(state: State, index: number) {
             const host = state.hosts.find(h => h.index === index);
