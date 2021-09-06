@@ -91,8 +91,20 @@ export const saveToFile = function(newLines: Array<string>): Promise<boolean> {
           }
         });
 
-        // Append new lines
-        // TODO: line endings depending on plat
+        // Write the lines
+        // So here comes the tricky part - find the easiest-safest-fastest option to write the content in the file
+        // What I decided for now:
+        // - no block present yet: add the block at the end of the file
+        // - block present: use a regex replace (just because the block might not be at the end of the file anymore)
+
+        let command = '';
+        if ('win32' === process.platform) {
+          // TODO: if no bloc present
+          const replacement = '\\"`${1}NEWHOST`n`${3}\\"';
+          // const replacement = `'what the f'`;
+          command = `powershell -command "(Get-Content -Raw ${getHostsFilePath()}) | Foreach-Object {$_ -replace '(${hostsDelimiterStart}\\r\\n)([\\s\\S]*)(${hostsDelimiterEnd}\\r\\n)', ${replacement}} | Set-Content ${getHostsFilePath()}`;
+        }
+
         keepingLines.push(hostsDelimiterStart + lineEndings[process.platform]);
 
         keepingLines.push(hostsDelimiterEnd + lineEndings[process.platform]);
@@ -104,14 +116,22 @@ export const saveToFile = function(newLines: Array<string>): Promise<boolean> {
 
         // https://github.com/jorangreef/sudo-prompt/issues/1  "bash -c -e \"echo 'some text' > /Library/some-file.txt\""
 
-        sudo.exec(
-          `echo "test" > ${getHostsFilePath()}`,
-          options,
-          function(error, stdout, stderr) {
-            if (error) throw error;
-            console.log('stdout: ' + stdout);
-          }
-        );
+        if (command) {
+          sudo.exec(
+            command,
+            options,
+            function(error, stdout, stderr) {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(true);
+                console.log('stdout: ' + stdout);
+              }
+            }
+          );
+        } else {
+          reject(`Platform ${process.platform} not supported`);
+        }
       })
       .catch((error) => {
         reject(error);
