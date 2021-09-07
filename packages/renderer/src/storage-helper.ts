@@ -1,4 +1,4 @@
-import type { Host } from 'types';
+import type { Host } from '../../../types';
 
 const saveKey = 'hosts_list';
 

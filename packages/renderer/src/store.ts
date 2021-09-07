@@ -1,8 +1,8 @@
-import type { Host } from 'types';
 import type { HostStrUpdate, State } from 'types/vuex';
 import { createStore } from 'vuex';
 import type { Store } from 'vuex';
 import { loadHosts, saveHosts } from './storage-helper';
+import type { Host } from '../../../types';
 
 const saveToStoragePlugin = (store: Store<State>) => {
     store.subscribe((mutation, state) => {

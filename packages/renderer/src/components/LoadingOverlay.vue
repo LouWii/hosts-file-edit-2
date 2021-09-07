@@ -1,5 +1,8 @@
 <template>
-  <div class="overlay-container" v-if="showLoadingOverlay">
+  <div
+    v-if="showLoadingOverlay"
+    class="overlay-container"
+  >
     <div class="loading-card">
       Loading
     </div>

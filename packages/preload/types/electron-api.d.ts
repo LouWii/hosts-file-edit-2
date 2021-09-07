@@ -1,13 +1,14 @@
-
 interface ElectronApi {
   readonly versions: Readonly<NodeJS.ProcessVersions>
   readonly platform: Readonly<string>
 }
 
+declare function saveToHosts(string): Promise<boolean>;
+
 interface FileHelper {
   readonly readFile: () => Promise<string>
   readonly getHostsLines: () => Promise<string>
-  readonly saveToHosts: () => Promise<boolean>
+  saveToHosts
 }
 
 declare interface Window {

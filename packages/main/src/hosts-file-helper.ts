@@ -1,10 +1,10 @@
 import { accessSync, constants, readFile } from 'fs';
-import sudo from 'sudo-prompt';
+import * as sudo from 'sudo-prompt';
+import type { Host } from '../../../types';
 
-//const hostsFilePath = '/etc/hosts';
 const hostsDelimiterStart = '# ----- HostsFileEdit config - Do not delete -----';
 const hostsDelimiterEnd   = '# -----      HostsFileEdit config - End      -----';
-//const regex = /(?:# ----- HostsFileEdit config - Do not delete -----\n)([\s\S]*)(?:# -----      HostsFileEdit config - End      -----\n?)/g;
+
 const hostsFilePaths: Record<string, string> = {
   'linux': '/etc/hosts',
   'darwin': '/etc/hosts',
@@ -12,10 +12,18 @@ const hostsFilePaths: Record<string, string> = {
   // Might be able to support others? https://nodejs.org/api/process.html#process_process_platform
 };
 
-const lineEndings: Record<string, string> = {
-  'linux': '\n',
-  'darwin': '\r',
-  'win32': '\r\n',
+// const lineEndings: Record<string, string> = {
+//   'linux': '\n',
+//   'darwin': '\r',
+//   'win32': '\r\n',
+// };
+
+const RESULT_STATE_CLEAN = 'clean';
+const RESULT_STATE_FOUND = 'found';
+
+const sudoExecOptions = {
+  name: 'Electron',
+  icns: '/Applications/Electron.app/Contents/Resources/Electron.icns', // (optional)
 };
 
 export const getHostsFilePath = function(): string {
@@ -24,7 +32,7 @@ export const getHostsFilePath = function(): string {
       throw `Platform ${process.platform} not supported`;
     }
     return path;
-}
+};
 
 export const readHostsFile = function(): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -70,72 +78,101 @@ export const getEditableHostsFromFile = function(): Promise<Array<string>> {
   });
 };
 
-export const saveToFile = function(newLines: Array<string>): Promise<boolean> {
+export const checkFileIntegrity = function(): Promise<string> {
   return new Promise((resolve, reject) => {
-    if (0 === newLines.length) {
-      resolve(true);
-    } else {
-      readHostsFile().then((content) => {
-        // Got the file content, remove old hosts-file-edit lines
-        const keepingLines: Array<string> = [];
-        let appLines = false;
-        content.split('\n').forEach((line) => {
-          if (line.substr(0, hostsDelimiterStart.length) === hostsDelimiterStart) {
-            appLines = true;
-          } else if (appLines) {
-            if (line.substr(0, hostsDelimiterEnd.length) === hostsDelimiterEnd) {
-              appLines = false;
-            }
-          } else if (!appLines) {
-            keepingLines.push(line);
+    readHostsFile().then((content) => {
+      let foundStartTag = false;
+      let foundEndTag   = false;
+      content.split('\n').forEach((line) => {
+        if (line.substr(0, hostsDelimiterStart.length) === hostsDelimiterStart) {
+          foundStartTag = true;
+        } else if (line.substr(0, hostsDelimiterEnd.length) === hostsDelimiterEnd) {
+          if (!foundStartTag) {
+            reject('Found end tag before start tag');
+            return;
+          } else {
+            foundEndTag = true;
           }
-        });
+        }
+      });
 
+      if (foundStartTag && !foundEndTag) {
+        reject('Missing end tag');
+        return;
+      }
+
+      if (!foundStartTag && !foundEndTag) {
+        resolve(RESULT_STATE_CLEAN);
+      } else {
+        resolve(RESULT_STATE_FOUND);
+      }
+    });
+  });
+};
+
+export const assembleLines = function(hosts: Array<Host>, lineEnding: string, linePrefix = ''): string {
+  let lines = '';
+  hosts.forEach(host => {
+    lines += linePrefix;
+    if (!host.active) {
+      lines += '# ';
+    }
+    lines += host.str;
+    lines += lineEnding;
+  });
+
+  return lines;
+};
+
+export const saveToFile = function(serializedHosts: string): Promise<boolean> {
+  const hosts = JSON.parse(serializedHosts);
+  return new Promise((resolve, reject) => {
+    if (0 === hosts.length) {
+      resolve(true);
+      return;
+    }
+
+    checkFileIntegrity()
+      .then((resultState) => {
         // Write the lines
         // So here comes the tricky part - find the easiest-safest-fastest option to write the content in the file
         // What I decided for now:
-        // - no block present yet: add the block at the end of the file
+        // - clean hosts file: add the block at the end of the file
         // - block present: use a regex replace (just because the block might not be at the end of the file anymore)
 
         let command = '';
-        if ('win32' === process.platform) {
-          // TODO: if no bloc present
-          const replacement = '\\"`${1}NEWHOST`n`${3}\\"';
-          // const replacement = `'what the f'`;
-          command = `powershell -command "(Get-Content -Raw ${getHostsFilePath()}) | Foreach-Object {$_ -replace '(${hostsDelimiterStart}\\r\\n)([\\s\\S]*)(${hostsDelimiterEnd}\\r\\n)', ${replacement}} | Set-Content ${getHostsFilePath()}`;
+        if (RESULT_STATE_CLEAN === resultState) {
+          command = `(echo ${hostsDelimiterStart}
+${assembleLines(hosts, '\n', 'echo ')}
+echo ${hostsDelimiterEnd}) >> ${getHostsFilePath()}`;
+        } else {
+          if ('win32' === process.platform) {
+            const replacement = '\\"`${1}' + assembleLines(hosts, '`r`n') + '`${3}\\"';
+            command = `powershell -command "(Get-Content -Raw ${getHostsFilePath()}) | Foreach-Object {$_ -replace '(${hostsDelimiterStart}\\r\\n)([\\s\\S]*)(${hostsDelimiterEnd}\\r\\n)', ${replacement}} | Set-Content ${getHostsFilePath()}`;
+          }
         }
 
-        keepingLines.push(hostsDelimiterStart + lineEndings[process.platform]);
-
-        keepingLines.push(hostsDelimiterEnd + lineEndings[process.platform]);
-
-        const options = {
-          name: 'Electron',
-          icns: '/Applications/Electron.app/Contents/Resources/Electron.icns', // (optional)
-        };
-
-        // https://github.com/jorangreef/sudo-prompt/issues/1  "bash -c -e \"echo 'some text' > /Library/some-file.txt\""
-
         if (command) {
+          // https://github.com/jorangreef/sudo-prompt/issues/1  "bash -c -e \"echo 'some text' > /Library/some-file.txt\""
+
           sudo.exec(
             command,
-            options,
-            function(error, stdout, stderr) {
+            sudoExecOptions,
+            function(error?: Error, stdout?: string | Buffer/*, stderr?: string | Buffer*/) {
               if (error) {
                 reject(error);
               } else {
                 resolve(true);
                 console.log('stdout: ' + stdout);
               }
-            }
+            },
           );
         } else {
           reject(`Platform ${process.platform} not supported`);
         }
       })
-      .catch((error) => {
-        reject(error);
+      .catch((errorMessage) => {
+        reject(errorMessage);
       });
-    }
   });
-}
+};

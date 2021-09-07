@@ -109,6 +109,6 @@ ipcMain.handle('app:get-hosts-lines', () => {
   return getEditableHostsFromFile();
 });
 
-ipcMain.handle('app:save-to-hosts', () => {
-  return saveToFile(['line here']);
+ipcMain.handle('app:save-to-hosts', (event, serializedHosts: string) => {
+  return saveToFile(serializedHosts);
 });

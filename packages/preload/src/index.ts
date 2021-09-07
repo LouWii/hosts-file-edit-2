@@ -16,9 +16,9 @@ contextBridge.exposeInMainWorld('fileHelper', {
   getHostsLines: () => {
     return ipcRenderer.invoke('app:get-hosts-lines');
   },
-  saveToHosts: () => {
-    return ipcRenderer.invoke('app:save-to-hosts');
-  }
+  saveToHosts: (serializedHosts: string) => {
+    return ipcRenderer.invoke('app:save-to-hosts', serializedHosts);
+  },
 });
 
 /**
