@@ -142,13 +142,22 @@ export const saveToFile = function(serializedHosts: string): Promise<boolean> {
 
         let command = '';
         if (RESULT_STATE_CLEAN === resultState) {
-          command = `(echo ${hostsDelimiterStart}
+          if ('win32' === process.platform) {
+            command = `(echo ${hostsDelimiterStart}
 ${assembleLines(hosts, '\n', 'echo ')}
 echo ${hostsDelimiterEnd}) >> ${getHostsFilePath()}`;
+          } else if ('linux' === process.platform) {
+            // Using printf as it has a more consistent behavior compared to echo
+            command = `printf '${hostsDelimiterStart}\n${assembleLines(hosts, '\n')}${hostsDelimiterEnd}' >> ${getHostsFilePath()}`;
+          }
         } else {
           if ('win32' === process.platform) {
             const replacement = '\\"`${1}' + assembleLines(hosts, '`r`n') + '`${3}\\"';
             command = `powershell -command "(Get-Content -Raw ${getHostsFilePath()}) | Foreach-Object {$_ -replace '(${hostsDelimiterStart}\\r\\n)([\\s\\S]*)(${hostsDelimiterEnd}\\r\\n)', ${replacement}} | Set-Content ${getHostsFilePath()}`;
+          } else if ('linux' === process.platform) {
+            // sed is hard to use with new line char in regex
+            // awk?
+            // perl?
           }
         }
 
