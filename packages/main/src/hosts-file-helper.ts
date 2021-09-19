@@ -148,22 +148,23 @@ ${assembleLines(hosts, '\n', 'echo ')}
 echo ${hostsDelimiterEnd}) >> ${getHostsFilePath()}`;
           } else if ('linux' === process.platform) {
             // Using printf as it has a more consistent behavior compared to echo
-            command = `printf '${hostsDelimiterStart}\n${assembleLines(hosts, '\n')}${hostsDelimiterEnd}' >> ${getHostsFilePath()}`;
+            command = `printf '${hostsDelimiterStart}\n${assembleLines(hosts, '\n')}${hostsDelimiterEnd}\n' >> ${getHostsFilePath()}`;
           }
         } else {
           if ('win32' === process.platform) {
             const replacement = '\\"`${1}' + assembleLines(hosts, '`r`n') + '`${3}\\"';
             command = `powershell -command "(Get-Content -Raw ${getHostsFilePath()}) | Foreach-Object {$_ -replace '(${hostsDelimiterStart}\\r\\n)([\\s\\S]*)(${hostsDelimiterEnd}\\r\\n)', ${replacement}} | Set-Content ${getHostsFilePath()}`;
           } else if ('linux' === process.platform) {
-            // sed is hard to use with new line char in regex
-            // awk?
-            // perl?
+            // sed is hard to use with new line char in regex and is not consistent between some distros
+            // Chose to use perl which hopefully is consistent between all distros
+            const replacement = `${hostsDelimiterStart}\\n${assembleLines(hosts, '\\n')}${hostsDelimiterEnd}\\n`;
+            command = `perl -i -0pe 's/(${hostsDelimiterStart}\\n)[\\s\\S]*(${hostsDelimiterEnd}\\n)/${replacement}/s' ${getHostsFilePath()}`;
           }
         }
 
         if (command) {
           // https://github.com/jorangreef/sudo-prompt/issues/1  "bash -c -e \"echo 'some text' > /Library/some-file.txt\""
-
+console.log(command);
           sudo.exec(
             command,
             sudoExecOptions,
