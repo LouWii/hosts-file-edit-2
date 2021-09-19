@@ -1,0 +1,5 @@
+# ----- HostsFileEdit config - Do not delete -----
+127.0.0.1    site.com
+# 127.0.0.1    esk8.local
+127.0.0.1    test.local
+# -----      HostsFileEdit config - End      -----

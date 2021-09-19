@@ -1,7 +1,7 @@
-import {app, BrowserWindow} from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
-
+import {getEditableHostsFromFile, readHostsFile, saveToFile} from '/@/hosts-file-helper';
 
 const isSingleInstance = app.requestSingleInstanceLock();
 
@@ -36,8 +36,8 @@ const createWindow = async () => {
       enableRemoteModule: import.meta.env.MODE === 'test', // Spectron tests can't work with enableRemoteModule: false
     },
     title: 'Hosts File Edit',
-    height: 300,
-    width: 450,
+    height: 350,
+    width: 550,
     minWidth: 350,
     minHeight: 250,
   });
@@ -99,3 +99,16 @@ if (import.meta.env.PROD) {
     .catch((e) => console.error('Failed check updates:', e));
 }
 
+
+// Events
+ipcMain.handle('app:read-hosts-file', () => {
+  return readHostsFile();
+});
+
+ipcMain.handle('app:get-hosts-lines', () => {
+  return getEditableHostsFromFile();
+});
+
+ipcMain.handle('app:save-to-hosts', (event, serializedHosts: string) => {
+  return saveToFile(serializedHosts);
+});

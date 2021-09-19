@@ -34,9 +34,9 @@
 </template>
 
 <script lang="ts">
-import type { Host } from 'types';
 import type { PropType} from 'vue';
 import {defineComponent} from 'vue';
+import type { Host } from '../../../../types';
 
 export default defineComponent({
   name: 'HostItem',

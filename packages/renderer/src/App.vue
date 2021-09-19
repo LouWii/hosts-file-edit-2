@@ -1,4 +1,5 @@
 <template>
+  <loading-overlay />
   <div class="actions-container">
     <button
       class="btn btn-default"
@@ -24,12 +25,15 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
+import { mapState } from 'vuex';
 import HostsList from '/@/components/HostsList.vue';
+import LoadingOverlay from '/@/components/LoadingOverlay.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
     HostsList,
+    LoadingOverlay,
   },
   data() {
     return {
@@ -38,6 +42,7 @@ export default defineComponent({
     };
   },
   computed: {
+    ...mapState(['hosts']),
     saveIntoFileButtonClass(): Record<string, boolean> {
       return {
         saving: this.savingIntoFile,
@@ -54,8 +59,16 @@ export default defineComponent({
       this.$store.commit('addNewHost');
     },
     saveHostsFile() {
-      let mm = 'tt';
-      mm.charAt(4);
+      this.$store.commit('showLoadingOverlay');
+      const p = window.fileHelper.saveToHosts(JSON.stringify(this.hosts));
+      p.then((result: boolean) => {
+        console.log(result);
+      }).catch((error: Error) => {
+        console.log('something was wrong', error);
+      })
+      .finally(() => {
+        this.$store.commit('hideLoadingOverlay');
+      });
     },
     importHostsList() {
       let mm = 'tt';

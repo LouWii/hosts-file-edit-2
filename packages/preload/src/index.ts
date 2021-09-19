@@ -1,4 +1,4 @@
-import {contextBridge} from 'electron';
+import {contextBridge, ipcRenderer } from 'electron';
 
 const apiKey = 'electron';
 /**
@@ -8,6 +8,18 @@ const api: ElectronApi = {
   versions: process.versions,
   platform: process.platform,
 };
+
+contextBridge.exposeInMainWorld('fileHelper', {
+  readFile: () => {
+    return ipcRenderer.invoke('app:read-hosts-file');
+  },
+  getHostsLines: () => {
+    return ipcRenderer.invoke('app:get-hosts-lines');
+  },
+  saveToHosts: (serializedHosts: string) => {
+    return ipcRenderer.invoke('app:save-to-hosts', serializedHosts);
+  },
+});
 
 /**
  * If contextIsolated enabled use contextBridge
