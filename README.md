@@ -9,3 +9,7 @@
 `npm run typecheck`
 
 `npm run lint`
+
+`npm run test`
+
+`npm run compile`

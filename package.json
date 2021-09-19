@@ -1,5 +1,10 @@
 {
   "name": "hosts-file-edit-2",
+  "description": "Small electron app to easily edit your hosts file",
+  "author": {
+    "name": "Louwii",
+    "url": "https://github.com/LouWii/hosts-file-edit-2/"
+  },
   "private": true,
   "engines": {
     "node": ">=v14.16",
