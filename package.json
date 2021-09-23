@@ -15,6 +15,8 @@
     "build": "node scripts/build.js",
     "precompile": "cross-env MODE=production npm run build",
     "compile": "electron-builder build --config electron-builder.config.js --dir --config.asar=false",
+    "prepack": "cross-env MODE=production npm run build",
+    "pack": "electron-builder build --config electron-builder.config.js",
     "pretest": "cross-env MODE=test npm run build",
     "test": "node tests/app.spec.js",
     "watch": "node scripts/watch.js",

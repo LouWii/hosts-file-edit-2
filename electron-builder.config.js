@@ -18,6 +18,7 @@ const config = {
   extraMetadata: {
     version: process.env.VITE_APP_VERSION,
   },
+  productName: 'Hosts File Edit 2',
 };
 
 module.exports = config;

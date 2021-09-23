@@ -22,4 +22,6 @@ The app does not collect any data whatsoever. Everything is stored in the app it
 
 `npm run test`
 
-`npm run compile`
+`npm run compile` to test compile (won't generate anything)
+
+`npm run pack` to compile and generate executables for current OS env

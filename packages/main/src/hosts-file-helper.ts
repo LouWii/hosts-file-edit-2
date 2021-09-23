@@ -8,7 +8,7 @@ const hostsDelimiterEnd   = '# -----      HostsFileEdit config - End      -----'
 const hostsFilePaths: Record<string, string> = {
   'linux': '/etc/hosts',
   'darwin': '/etc/hosts',
-  'win32': 'C:\\Windows\\System32\\drivers\\etc\\testhosts', // TODO: What if Windows is not on C:?
+  'win32': 'C:\\Windows\\System32\\drivers\\etc\\hosts', // TODO: What if Windows is not on C:?
   // Might be able to support others? https://nodejs.org/api/process.html#process_process_platform
 };
 
@@ -143,7 +143,8 @@ export const saveToFile = function(serializedHosts: string): Promise<boolean> {
         let command = '';
         if (RESULT_STATE_CLEAN === resultState) {
           if ('win32' === process.platform) {
-            command = `(echo ${hostsDelimiterStart}
+            command = `(echo.
+echo ${hostsDelimiterStart}
 ${assembleLines(hosts, '\n', 'echo ')}
 echo ${hostsDelimiterEnd}) >> ${getHostsFilePath()}`;
           } else if ('linux' === process.platform) {
@@ -164,16 +165,15 @@ echo ${hostsDelimiterEnd}) >> ${getHostsFilePath()}`;
 
         if (command) {
           // https://github.com/jorangreef/sudo-prompt/issues/1  "bash -c -e \"echo 'some text' > /Library/some-file.txt\""
-console.log(command);
+
           sudo.exec(
             command,
             sudoExecOptions,
-            function(error?: Error, stdout?: string | Buffer/*, stderr?: string | Buffer*/) {
+            function(error?: Error/*, stdout?: string | Buffer, stderr?: string | Buffer*/) {
               if (error) {
                 reject(error);
               } else {
                 resolve(true);
-                console.log('stdout: ' + stdout);
               }
             },
           );
