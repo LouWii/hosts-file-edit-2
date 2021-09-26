@@ -4,7 +4,12 @@
     class="overlay-container"
   >
     <div class="loading-card">
-      Loading
+      <div class="icon-container">
+        <span class="glyphicon glyphicon-floppy-disk" />
+      </div>
+      <div class="loading-text">
+        Saving data...
+      </div>
     </div>
   </div>
 </template>
@@ -42,5 +47,45 @@ export default defineComponent({
   margin: auto;
   background: #fff;
   border-radius: 1rem;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+.icon-container {
+  overflow: hidden;
+  flex: 1;
+}
+.icon-container .glyphicon {
+  font-size: 8rem;
+  margin-left: 8px;
+
+  animation-duration: 1.5s;
+  animation-name: slidein;
+  animation-iteration-count: infinite;
+}
+.loading-text {
+  font-size: 125%;
+  margin: 0.3rem 0;
+}
+@keyframes slidein {
+  from {
+    transform: translateY(-50px);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translateY(25px);
+    opacity: 1;
+  }
+
+  65% {
+    transform: translateY(25px);
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(25px);
+  }
 }
 </style>
