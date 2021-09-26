@@ -3,6 +3,7 @@
   "description": "Small electron app to easily edit your hosts file",
   "author": {
     "name": "Louwii",
+    "email": "me@louwii.com",
     "url": "https://github.com/LouWii/hosts-file-edit-2/"
   },
   "private": true,

@@ -19,6 +19,10 @@ const config = {
     version: process.env.VITE_APP_VERSION,
   },
   productName: 'Hosts File Edit 2',
+  linux: {
+    category: 'Utility',
+    target: ['AppImage', 'deb'/*AppImage, snap, deb, rpm, freebsd, pacman, p5p, apk, 7z, zip, tar.xz, tar.lz, tar.gz, tar.bz2, dir*/],
+  },
 };
 
 module.exports = config;
