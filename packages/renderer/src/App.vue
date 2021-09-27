@@ -41,21 +41,6 @@ export default defineComponent({
       savingIntoFileState: 0,
     };
   },
-  created() {
-    window.appMenu.onMenuNav((menuItem: string) => {
-      switch (menuItem) {
-        case 'new-line':
-          this.$store.commit('addNewHost');
-          break;
-        case 'delete-all':
-          this.$store.commit('deleteAllHosts');
-          break;
-        case 'save':
-          this.saveHostsFile();
-          break;
-      }
-    });
-  },
   computed: {
     ...mapState(['hosts']),
     saveIntoFileButtonClass(): Record<string, boolean> {
@@ -68,6 +53,24 @@ export default defineComponent({
     saveIntoFileButtonDisabled(): boolean {
       return this.savingIntoFile || this.savingIntoFileState != 0;
     },
+  },
+  created() {
+    window.appMenu.onMenuNav((menuItem: string) => {
+      switch (menuItem) {
+        case 'new-line':
+          this.$store.commit('addNewHost');
+          break;
+        case 'delete-all':
+          this.$store.commit('deleteAllHosts');
+          break;
+        case 'save':
+          this.saveHostsFile();
+          break;
+        case 'undo':
+          // this.undo();
+          break;
+      }
+    });
   },
   methods: {
     addHost() {

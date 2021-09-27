@@ -117,28 +117,43 @@ ipcMain.handle('app:save-to-hosts', (event, serializedHosts: string) => {
 });
 
 // Menu
-const menuTemplate = [
+const menuTemplate: Electron.MenuItemConstructorOptions[] = [
   {
     label: 'File',
     submenu: [
       {
         label: 'New host line',
         accelerator: 'CmdOrCtrl+N',
-        click: () => {mainWindow?.webContents.send('app-menu-call', 'new-line')},
+        click: () => {mainWindow?.webContents.send('app-menu-call', 'new-line');},
       },
       {
         label: 'Remove all hosts',
         accelerator: 'CmdOrCtrl+D',
-        click: () => {mainWindow?.webContents.send('app-menu-call', 'delete-all')},
+        click: () => {mainWindow?.webContents.send('app-menu-call', 'delete-all');},
       },
       {type: 'separator'},
       {
         label: 'Save into hosts file',
         accelerator: 'CmdOrCtrl+S',
-        click: () => {mainWindow?.webContents.send('app-menu-call', 'save')},
+        click: () => {mainWindow?.webContents.send('app-menu-call', 'save');},
       },
       {type: 'separator'},
-      isMac ? { role: 'close' } : { role: 'quit' }
+      isMac ? { role: 'close' } : { role: 'quit' },
+    ],
+  },
+  {
+    label: 'Edit',
+    submenu: [
+      {
+        label: 'Undo',
+        accelerator: 'CmdOrCtrl+Z',
+        click: () => {mainWindow?.webContents.send('app-menu-call', 'undo');},
+      },
+      {
+        label: 'Redo',
+        accelerator: 'Shift+CmdOrCtrl+Z',
+        click: () => {mainWindow?.webContents.send('app-menu-call', 'redo');},
+      },
     ],
   },
   ...(isDev ? [{
@@ -147,7 +162,7 @@ const menuTemplate = [
       {role: 'reload'},
       {role: 'toggleDevTools'},
     ],
-  }] : []),
+  }] : []) as Electron.MenuItemConstructorOptions[],
   {
     label: 'Window',
     submenu: [
@@ -156,10 +171,10 @@ const menuTemplate = [
         { type: 'separator' },
         { role: 'front' },
         { type: 'separator' },
-        { role: 'window' }
+        { role: 'window' },
       ] : [
         { role: 'close' },
-      ]),
+      ]) as Electron.MenuItemConstructorOptions[],
     ],
   },
   {
@@ -169,10 +184,10 @@ const menuTemplate = [
         label: 'Learn More',
         click: async () => {
           await shell.openExternal('https://github.com/LouWii/hosts-file-edit-2#readme');
-        }
+        },
       },
     ],
-  }
+  },
 ];
 
 app.on('ready', () => {

@@ -5,7 +5,6 @@
         v-model="localHostStr"
         class="form-control"
         type="text"
-        @change="updateHostStr"
       >
       <span class="input-group-btn">
         <button
@@ -56,7 +55,9 @@ export default defineComponent({
     localHostStr() {
       clearTimeout(this.updateDebounce);
       this.updateDebounce = setTimeout(() => {
-        this.$store.commit('updateHostStr', {index: this.host.index, str: this.localHostStr});
+        if (this.localHostStr !== this.host.str) {
+          this.$store.commit('updateHostStr', {index: this.host.index, str: this.localHostStr});
+        }
       }, 200);
     },
   },

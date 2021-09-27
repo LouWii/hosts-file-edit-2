@@ -19,5 +19,5 @@ declare module '@vue/runtime-core' {
 
 export interface Mutation {
     type: string
-    payload?: any
+    payload?: unknown
 }

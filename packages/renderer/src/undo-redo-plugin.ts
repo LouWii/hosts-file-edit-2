@@ -1,19 +1,24 @@
 // Shamelessly taken from https://vuejsdevelopers.com/2017/11/13/vue-js-vuex-undo-redo/
 // Didn't find any undo-redo lib that I deemed trustable on the long term
 
-import { Mutation } from "types/vuex";
+import type { Mutation } from 'types/vuex';
+import type { App } from 'vue';
 
 const EMPTY_STATE = 'emptyState';
 
+interface UndoRedoOptions {
+  ignoreMutations?: string[]
+}
+
 export default {
-  install: (app, options = {}) => {
+  install: (app: App, options: UndoRedoOptions = {}): void => {
     app.mixin({
       data() {
         return {
           done: [],
           undone: [],
           newMutation: true,
-          ignoreMutations: options.ignoreMutations|| []
+          ignoreMutations: options.ignoreMutations|| [],
         };
       },
       created() {
@@ -44,7 +49,7 @@ export default {
           this.newMutation = true;
         },
         redo() {
-          let commit = this.undone.pop();
+          const commit = this.undone.pop();
           this.newMutation = false;
           switch (typeof commit.payload) {
             case 'object':
@@ -58,4 +63,4 @@ export default {
       },
     });
   },
-}
+};
