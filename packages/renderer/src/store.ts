@@ -10,11 +10,11 @@ const saveToStoragePlugin = (store: Store<State>) => {
     });
 };
 
+// TODO: Combine hosts from hosts file and from local storage
+const loadedHosts: Array<Host> = loadHosts();
+
 export default createStore({
     state(): State {
-        // TODO: Combine hosts from hosts file and from local storage
-        const loadedHosts: Array<Host> = loadHosts();
-
         return {
             hosts: loadedHosts,
             showLoadingOverlay: false,
@@ -33,6 +33,13 @@ export default createStore({
                 index: maxIndex + 1,
             };
             state.hosts.push(host);
+        },
+        deleteAllHosts(state: State) {
+            state.hosts = [];
+        },
+        emptyState(state: State) {
+            state.showLoadingOverlay = false;
+            state.hosts = loadedHosts;
         },
         hideLoadingOverlay(state: State) {
             state.showLoadingOverlay = false;

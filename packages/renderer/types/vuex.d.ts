@@ -7,12 +7,17 @@ export interface State {
 }
 
 export interface HostStrUpdate {
-    index: number,
-    str: string,
+    index: number
+    str: string
 }
 
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties {
         $store: Store<State>
     }
+}
+
+export interface Mutation {
+    type: string
+    payload?: any
 }

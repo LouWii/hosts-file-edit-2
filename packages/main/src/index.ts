@@ -1,9 +1,13 @@
-import {app, BrowserWindow, ipcMain} from 'electron';
+import {app, BrowserWindow, ipcMain, Menu, shell} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
 import {getEditableHostsFromFile, readHostsFile, saveToFile} from '/@/hosts-file-helper';
 
 const isSingleInstance = app.requestSingleInstanceLock();
+
+const isMac = process.platform === 'darwin';
+
+const isDev = import.meta.env.MODE === 'development';
 
 if (!isSingleInstance) {
   app.quit();
@@ -13,7 +17,7 @@ if (!isSingleInstance) {
 app.disableHardwareAcceleration();
 
 // Install "Vue.js devtools"
-if (import.meta.env.MODE === 'development') {
+if (isDev) {
   app.whenReady()
     .then(() => import('electron-devtools-installer'))
     .then(({default: installExtension, VUEJS3_DEVTOOLS}) => installExtension(VUEJS3_DEVTOOLS, {
@@ -51,7 +55,7 @@ const createWindow = async () => {
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show();
 
-    if (import.meta.env.MODE === 'development') {
+    if (isDev) {
       mainWindow?.webContents.openDevTools();
     }
   });
@@ -61,7 +65,7 @@ const createWindow = async () => {
    * Vite dev server for development.
    * `file://../renderer/index.html` for production and test
    */
-  const pageUrl = import.meta.env.MODE === 'development' && import.meta.env.VITE_DEV_SERVER_URL !== undefined
+  const pageUrl = isDev && import.meta.env.VITE_DEV_SERVER_URL !== undefined
     ? import.meta.env.VITE_DEV_SERVER_URL
     : new URL('../renderer/dist/index.html', 'file://' + __dirname).toString();
 
@@ -84,7 +88,6 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
-
 
 app.whenReady()
   .then(createWindow)
@@ -111,4 +114,67 @@ ipcMain.handle('app:get-hosts-lines', () => {
 
 ipcMain.handle('app:save-to-hosts', (event, serializedHosts: string) => {
   return saveToFile(serializedHosts);
+});
+
+// Menu
+const menuTemplate = [
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'New host line',
+        accelerator: 'CmdOrCtrl+N',
+        click: () => {mainWindow?.webContents.send('app-menu-call', 'new-line')},
+      },
+      {
+        label: 'Remove all hosts',
+        accelerator: 'CmdOrCtrl+D',
+        click: () => {mainWindow?.webContents.send('app-menu-call', 'delete-all')},
+      },
+      {type: 'separator'},
+      {
+        label: 'Save into hosts file',
+        accelerator: 'CmdOrCtrl+S',
+        click: () => {mainWindow?.webContents.send('app-menu-call', 'save')},
+      },
+      {type: 'separator'},
+      isMac ? { role: 'close' } : { role: 'quit' }
+    ],
+  },
+  ...(isDev ? [{
+    label: 'View',
+    submenu: [
+      {role: 'reload'},
+      {role: 'toggleDevTools'},
+    ],
+  }] : []),
+  {
+    label: 'Window',
+    submenu: [
+      { role: 'minimize' },
+      ...(isMac ? [
+        { type: 'separator' },
+        { role: 'front' },
+        { type: 'separator' },
+        { role: 'window' }
+      ] : [
+        { role: 'close' },
+      ]),
+    ],
+  },
+  {
+    role: 'help',
+    submenu: [
+      {
+        label: 'Learn More',
+        click: async () => {
+          await shell.openExternal('https://github.com/LouWii/hosts-file-edit-2#readme');
+        }
+      },
+    ],
+  }
+];
+
+app.on('ready', () => {
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 });

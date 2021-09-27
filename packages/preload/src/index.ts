@@ -21,6 +21,12 @@ contextBridge.exposeInMainWorld('fileHelper', {
   },
 });
 
+contextBridge.exposeInMainWorld('appMenu', {
+   onMenuNav: (callback: (customData: string) => void) => {
+    ipcRenderer.on('app-menu-call', (event, customData) => callback(customData));
+   },
+});
+
 /**
  * If contextIsolated enabled use contextBridge
  * Else use fallback
