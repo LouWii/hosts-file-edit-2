@@ -38,6 +38,7 @@
     "*.{js,ts,vue}": "eslint --cache --fix"
   },
   "devDependencies": {
+    "@types/clone": "^2.1.1",
     "@types/electron-devtools-installer": "2.2.0",
     "@typescript-eslint/eslint-plugin": "4.30.0",
     "@vitejs/plugin-vue": "1.6.0",
@@ -57,10 +58,10 @@
   "dependencies": {
     "@typescript-eslint/parser": "^4.30.0",
     "bootstrap": "^3.4.1",
+    "clone": "^2.1.2",
     "electron-updater": "4.5.1",
     "sudo-prompt": "^9.2.1",
     "vue": "3.2.6",
-    "vue-router": "4.0.11",
     "vuex": "^4.0.2"
   }
 }

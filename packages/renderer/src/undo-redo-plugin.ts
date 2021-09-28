@@ -49,16 +49,18 @@ export default {
           this.newMutation = true;
         },
         redo() {
-          const commit = this.undone.pop();
-          this.newMutation = false;
-          switch (typeof commit.payload) {
-            case 'object':
-              this.$store.commit(`${commit.type}`, Object.assign({}, commit.payload));
-              break;
-            default:
-              this.$store.commit(`${commit.type}`, commit.payload);
+          if (this.undone.length) {
+            const commit = this.undone.pop();
+            this.newMutation = false;
+            switch (typeof commit.payload) {
+              case 'object':
+                this.$store.commit(`${commit.type}`, Object.assign({}, commit.payload));
+                break;
+              default:
+                this.$store.commit(`${commit.type}`, commit.payload);
+            }
+            this.newMutation = true;
           }
-          this.newMutation = true;
         },
       },
     });

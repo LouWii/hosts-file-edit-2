@@ -55,6 +55,17 @@ export default defineComponent({
     },
   },
   created() {
+    // We need to capture ALL ctrl+Z ctrl+shift+Z events, otherwise when inside an input, it defaults to the browser undo,
+    //  not the custom undo from the app - and using role: 'undo' in Electron menu doesn't work either
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.shiftKey && event.key === 'z') {
+        event.preventDefault();
+        this.redo();
+      } else if (event.ctrlKey && event.key === 'z') {
+        event.preventDefault();
+        this.undo();
+      }
+    });
     window.appMenu.onMenuNav((menuItem: string) => {
       switch (menuItem) {
         case 'new-line':
@@ -67,7 +78,10 @@ export default defineComponent({
           this.saveHostsFile();
           break;
         case 'undo':
-          // this.undo();
+          this.undo();
+          break;
+        case 'redo':
+          this.redo();
           break;
       }
     });
@@ -87,14 +101,6 @@ export default defineComponent({
       .finally(() => {
         this.$store.commit('hideLoadingOverlay');
       });
-    },
-    importHostsList() {
-      let mm = 'tt';
-      mm.charAt(4);
-    },
-    exportHostsList() {
-      let mm = 'tt';
-      mm.charAt(4);
     },
   },
 });

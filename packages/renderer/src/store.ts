@@ -3,6 +3,7 @@ import { createStore } from 'vuex';
 import type { Store } from 'vuex';
 import { loadHosts, saveHosts } from './storage-helper';
 import type { Host } from '../../../types';
+import * as clone from 'clone';
 
 const saveToStoragePlugin = (store: Store<State>) => {
     store.subscribe((mutation, state) => {
@@ -39,7 +40,7 @@ export default createStore({
         },
         emptyState(state: State) {
             state.showLoadingOverlay = false;
-            state.hosts = [...initialLoadedHosts];
+            state.hosts = clone(initialLoadedHosts);
         },
         hideLoadingOverlay(state: State) {
             state.showLoadingOverlay = false;

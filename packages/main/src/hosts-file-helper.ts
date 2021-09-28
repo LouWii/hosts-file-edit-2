@@ -127,11 +127,6 @@ export const assembleLines = function(hosts: Array<Host>, lineEnding: string, li
 export const saveToFile = function(serializedHosts: string): Promise<boolean> {
   const hosts = JSON.parse(serializedHosts);
   return new Promise((resolve, reject) => {
-    if (0 === hosts.length) {
-      resolve(true);
-      return;
-    }
-
     checkFileIntegrity()
       .then((resultState) => {
         // Write the lines

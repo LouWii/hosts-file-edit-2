@@ -60,6 +60,14 @@ export default defineComponent({
         }
       }, 200);
     },
+    host: {
+      deep: true,
+      handler() {
+        if (this.localHostStr !== this.host.str) {
+          this.localHostStr = this.host.str;
+        }
+      },
+    },
   },
   beforeMount(): void {
     this.localHostStr = this.host.str;
@@ -70,9 +78,6 @@ export default defineComponent({
     },
     removeHost() {
       this.$store.commit('removeHost', this.host.index);
-    },
-    updateHostStr() {
-      this.$store.commit('updateHostStr', {index: this.host.index, str: this.localHostStr});
     },
   },
 });
